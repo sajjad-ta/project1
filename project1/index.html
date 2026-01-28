@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterplan | Study Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <span class="icon">✨</span>
+                <h1>Masterplan</h1>
+            </div>
+            <nav>
+                <button id="btn-dashboard" class="nav-btn active">Dashboard</button>
+                <button id="btn-courses" class="nav-btn">Courses</button>
+            </nav>
+        </header>
+
+        <main id="main-content">
+            <!-- Views will be injected here by JS -->
+            <div id="loading" class="loading-state">
+                <div class="loader"></div>
+                <p>Loading your plan...</p>
+            </div>
+        </main>
+
+        <!-- Templates for different views -->
+        <template id="view-empty">
+            <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <h2>No Study Plan Yet</h2>
+                <p>Add your courses and exam dates to generate a personalized study schedule.</p>
+                <button class="cta-btn" onclick="app.router.navigate('courses')">Add Courses</button>
+            </div>
+        </template>
+
+        <template id="view-courses">
+            <div class="view-container">
+                <div class="view-header">
+                    <h2>Manage Courses</h2>
+                    <p>Input your courses and when you need to be ready.</p>
+                </div>
+
+                <div class="course-list" id="course-list">
+                    <!-- Course items go here -->
+                </div>
+
+                <form id="add-course-form" class="glass-card">
+                    <h3>Add New Course</h3>
+                    <div class="form-group">
+                        <label for="course-name">Course Name</label>
+                        <input type="text" id="course-name" placeholder="e.g. Linear Algebra" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exam-date">Exam Date</label>
+                        <input type="date" id="exam-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="course-topics">Topics (one per line)</label>
+                        <textarea id="course-topics" placeholder="Chapter 1&#10;Chapter 2&#10;Midterm Review" rows="5"
+                            required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Add Course</button>
+                </form>
+            </div>
+        </template>
+
+        <template id="view-dashboard">
+            <div class="view-container">
+                <div class="view-header">
+                    <h2>Today's Plan</h2>
+                    <p id="current-date">Fetching date...</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-value" id="stat-hours">0</span>
+                        <span class="stat-label">Topics Left</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="stat-exams">0</span>
+                        <span class="stat-label">Upcoming Exams</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="stat-progress">0%</span>
+                        <span class="stat-label">Completion</span>
+                    </div>
+                </div>
+
+                <div class="timeline" id="daily-timeline">
+                    <!-- Tasks go here -->
+                </div>
+
+                <div class="actions">
+                    <button class="secondary-btn" onclick="app.planner.regenerate()">Regenerate Plan</button>
+                </div>
+            </div>
+        </template>
+
+        <template id="view-course-details">
+            <div class="view-container">
+                <div class="view-header">
+                    <button class="back-btn" onclick="app.router.navigate('courses')">← Back</button>
+                    <h2 id="detail-course-name">Course Name</h2>
+                    <p id="detail-exam-date">Exam Date</p>
+                </div>
+
+                <div class="topics-list" id="detail-topics-list">
+                    <!-- Topics go here -->
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
