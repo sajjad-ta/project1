@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Online Exam - 60 MCQ</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; padding: 20px; }
+        .quiz-container { max-width: 850px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        #timer-box { position: fixed; top: 20px; right: 20px; background: #e74c3c; color: white; padding: 15px; border-radius: 10px; font-size: 20px; font-weight: bold; z-index: 1000; }
+        h1 { text-align: center; color: #2c3e50; }
+        .student-info { background: #d1d8e0; padding: 15px; border-radius: 10px; margin-bottom: 25px; }
+        .student-info input { width: 95%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-top: 10px; }
+        .question-card { margin-bottom: 25px; padding: 20px; border-left: 5px solid #3498db; background: #fff; border-top: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee; border-radius: 5px; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin: 10px 0; padding: 12px; background: #f9f9f9; border-radius: 8px; cursor: pointer; transition: 0.2s; border: 1px solid #ddd; }
+        .options li:hover { background: #e1e8ed; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.2); }
+        #result-box { display: none; text-align: center; padding: 30px; margin-top: 20px; border-radius: 15px; color: white; font-size: 22px; font-weight: bold; }
+        .success { background: #27ae60; }
+        .average { background: #f39c12; }
+        .fail { background: #c0392b; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background: #fff3cd; border-left: 5px solid #f1c40f; color: #856404; font-size: 14px; border-radius: 5px; }
+        button#submitBtn { width: 100%; padding: 18px; background: #2980b9; color: white; border: none; border-radius: 10px; font-size: 20px; cursor: pointer; font-weight: bold; }
+        button:disabled { background: #bdc3c7 !important; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div id="timer-box">সময় বাকি: <span id="time">40:00</span></div>
+
+<div class="quiz-container">
+    <h1>পদার্থবিজ্ঞান পরীক্ষা (Physics MCQ)</h1>
+    <p style="text-align:center;">অধ্যায়: পর্যায়বৃত্ত গতি ও আদর্শ গ্যাস | মোট প্রশ্ন: ৬০টি</p>
+
+    <div class="student-info">
+        <label><b>শিক্ষার্থীর নাম লিখুন:</b></label>
+        <input type="text" id="studentName" placeholder="এখানে নাম লিখুন...">
+    </div>
+
+    <div id="quiz-content"></div>
+
+    <button id="submitBtn" onclick="calculateResult()">সাবমিট করুন (Submit Exam)</button>
+    <div id="result-box"></div>
+</div>
+
+<script>
+    const questions = [
+        { q: "১. সরল ছন্দিত স্পন্দনের ত্বরণ সরণের কি?", options: ["সমানুপাতিক", "ব্যস্তানুপাতিক", "বর্গের সমানুপাতিক", "অর্ধেক"], ans: 0, exp: "ত্বরণ সর্বদা সরণের সমানুপাতিক ও বিপরীতমুখী (a ∝ -x)।" },
+        { q: "২. সাম্যাবস্থান হতে কত দূরে গতিশক্তি ও স্থিতিশক্তি সমান হবে?", options: ["A/2", "A/√2", "A/4", "A"], ans: 1, exp: "x = A/√2 অবস্থানে কণার গতিশক্তি ও স্থিতিশক্তি পরস্পর সমান হয়।" },
+        { q: "৩. সেকেন্ড দোলকের কার্যকর দৈর্ঘ্য কত?", options: ["0.993 m", "1.5 m", "0.5 m", "2 m"], ans: 0, exp: "সেকেন্ড দোলকের আদর্শ কার্যকর দৈর্ঘ্য প্রায় ০.৯৯৩ মিটার।" },
+        { q: "৪. পৃথিবীর কেন্দ্রে সরল দোলকের দোলনকাল কত?", options: ["শূন্য", "২ সেকেন্ড", "অসীম", "৯.৮ সেকেন্ড"], ans: 2, exp: "কেন্দ্রে g=0, তাই T = 2π√(L/g) সূত্রমতে দোলনকাল অসীম।" },
+        { q: "৫. স্প্রিং ধ্রুবক (K) এর একক কোনটি?", options: ["Nm", "Nm^-1", "Nm^-2", "J"], ans: 1, exp: "F=Kx থেকে পাই K=F/x, যার একক N/m বা Nm^-1।" },
+        { q: "৬. পর্যায়কাল ৫% বাড়াতে হলে দৈর্ঘ্য কত গুণ বাড়াতে হবে?", options: ["১.২৫ গুণ", "১.১০ গুণ", "১.৫ গুণ", "২ গুণ"], ans: 0, exp: "T ∝ √L সম্পর্ক থেকে এটি ১.২৫ গুণ পাওয়া যায়।" },
+        { q: "৭. সরল ছন্দিত গতির সর্বোচ্চ বেগ কোথায় পাওয়া যায়?", options: ["সাম্যাবস্থানে", "সর্বোচ্চ বিস্তারে", "মাঝামাঝি স্থানে", "কোথাও না"], ans: 0, exp: "সাম্যাবস্থানে (x=0) বেগের মান সর্বোচ্চ হয় (Vmax = ωA)।" },
+        { q: "৮. ববের ভর বাড়ালে দোলনকালের কী পরিবর্তন হবে?", options: ["বাড়বে", "কমবে", "অপরিবর্তিত থাকবে", "অর্ধেক হবে"], ans: 2, exp: "দোলনকাল ববের ভরের ওপর নির্ভর করে না।" },
+        { q: "৯. দোলক ঘড়িকে পাহাড়ের চূড়ায় নিলে কী হবে?", options: ["দ্রুত চলবে", "ধীরে চলবে", "একই থাকবে", "বন্ধ হয়ে যাবে"], ans: 1, exp: "পাহাড়ের চূড়ায় g কম বলে দোলনকাল বাড়ে, ফলে ঘড়ি ধীরে চলে।" },
+        { q: "১০. মহাকাশে সেকেন্ড দোলকের কম্পাঙ্ক কত?", options: ["1 Hz", "2 Hz", "0.5 Hz", "0 Hz"], ans: 3, exp: "মহাকাশে g=0, ফলে কম্পাঙ্ক শূন্য হয়।" },
+        { q: "১১. আদর্শ গ্যাসের অবস্থার সমীকরণ কোনটি?", options: ["PV=RT", "PV=nRT", "PV=KT", "সবগুলো"], ans: 1, exp: "PV=nRT হলো আদর্শ গ্যাসের সাধারণ সমীকরণ।" },
+        { q: "১২. পরম শূন্য তাপমাত্রা কত কেলভিন?", options: ["0 K", "273 K", "-273 K", "100 K"], ans: 0, exp: "0 Kelvin বা -273.15°C হলো পরম শূন্য তাপমাত্রা।" },
+        { q: "১৩. বয়েলের সূত্রে কোনটি স্থির থাকে?", options: ["চাপ", "আয়তন", "তাপমাত্রা", "ভর"], ans: 2, exp: "বয়েলের সূত্রে তাপমাত্রা (T) স্থির থাকে।" },
+        { q: "১৪. চার্লসের সূত্রে কোনটি স্থির থাকে?", options: ["চাপ", "তাপমাত্রা", "আয়তন", "ঘনত্ব"], ans: 0, exp: "চার্লসের সূত্রে চাপ (P) স্থির থাকে।" },
+        { q: "১৫. গ্যাসের অণুর মূল গড় বর্গবেগ (RMS) কিসের সমানুপাতিক?", options: ["T", "√T", "T^2", "1/T"], ans: 1, exp: "C = √(3RT/M), অর্থাৎ C ∝ √T।" },
+        { q: "১৬. পানির ত্রৈধ বিন্দুর তাপমাত্রা কত?", options: ["273.16 K", "0 K", "373 K", "273 K"], ans: 0, exp: "২৭৩.১৬ কেলভিন তাপমাত্রায় পানি কঠিন, তরল ও বাষ্পীয় অবস্থায় থাকে।" },
+        { q: "১৭. বোল্টজম্যান ধ্রুবকের (k) মান কত?", options: ["1.38x10^-23 J/K", "8.314 J/K", "6.626x10^-34 J/K", "1.6x10^-19 J/K"], ans: 0, exp: "k = R/Na = 1.38 x 10^-23 J/K।" },
+        { q: "১৮. সম্পৃক্ত জলীয় বাষ্প কোনটি মেনে চলে না?", options: ["বয়েল সূত্র", "চার্লস সূত্র", "উভয়ই", "কোনটিই না"], ans: 2, exp: "সম্পৃক্ত বাষ্প বয়েল ও চার্লসের সূত্র মেনে চলে না।" },
+        { q: "১৯. শিশিরাঙ্কে জলীয় বাষ্প কীরূপ থাকে?", options: ["সম্পৃক্ত", "অসম্পৃক্ত", "অতিপৃক্ত", "শূন্য"], ans: 0, exp: "যে তাপমাত্রায় বায়ু জলীয় বাষ্প দ্বারা সম্পৃক্ত হয় তাকে শিশিরাঙ্ক বলে।" },
+        { q: "২০. শুষ্ক ও আর্দ্র বাল্ব থার্মোমিটারের পাঠের পার্থক্য বেশি হলে কী হয়?", options: ["বৃষ্টি হবে", "আবহাওয়া শুষ্ক", "ঝড় হবে", "তুষারপাত হবে"], ans: 1, exp: "পার্থক্য বেশি হলে বুঝতে হবে বায়ু অনেক শুষ্ক।" },
+        { q: "২১. আদর্শ গ্যাস বাস্তব গ্যাসের মতো আচরণ করে কখন?", options: ["উচ্চ চাপে", "নিম্ন চাপে", "উচ্চ তাপমাত্রায়", "খ ও গ উভয়ই"], ans: 3, exp: "নিম্ন চাপ ও উচ্চ তাপমাত্রায় বাস্তব গ্যাস আদর্শ আচরণ করে।" },
+        { q: "২২. গ্যাসের গতিতত্ত্বের স্বীকার্য অনুযায়ী অণুর সংঘর্ষগুলো কেমন?", options: ["অস্থিতিস্থাপক", "স্থিতিস্থাপক", "আংশিক", "বিস্ফোরক"], ans: 1, exp: "গ্যাসের অণুর সংঘর্ষগুলো পূর্ণ স্থিতিস্থাপক।" },
+        { q: "২৩. ১ মোল গ্যাসের গতীয় শক্তি কত?", options: ["1/2 RT", "3/2 RT", "RT", "2/3 RT"], ans: 1, exp: "এক মোল গ্যাসের মোট গতিশক্তি E = 3/2 RT।" },
+        { q: "২৪. কণা সাম্যাবস্থান থেকে যাত্রা শুরু করলে আদি দশা কত?", options: ["0", "π/2", "π", "2π"], ans: 0, exp: "সাম্যাবস্থানে দশা শূন্য ধরা হয়।" },
+        { q: "২৫. সেকেন্ড দোলক ১ সেকেন্ডে কতটুকু দূরত্ব অতিক্রম করে?", options: ["এক প্রান্ত থেকে অন্য প্রান্ত", "এক পূর্ণ দোলন", "অর্ধেক বিস্তার", "কোনোটিই নয়"], ans: 0, exp: "সেকেন্ড দোলক ১ সেকেন্ডে এক প্রান্ত থেকে অন্য প্রান্তে যায়।" },
+        { q: "২৬. স্প্রিং-কে সমান দুই খণ্ডে কাটলে স্প্রিং ধ্রুবক কত হবে?", options: ["অর্ধেক", "দ্বিগুণ", "একই", "চারগুণ"], ans: 1, exp: "দৈর্ঘ্য অর্ধেক হলে K দ্বিগুণ হয়ে যায়।" },
+        { q: "২৭. সরল দোলকের বিস্তার ৪ ডিগ্রির বেশি হলে কী হবে?", options: ["গতি সরল ছন্দিত হবে না", "বেগ বাড়বে", "ত্বরণ কমবে", "একই থাকবে"], ans: 0, exp: "বিস্তার ৪ ডিগ্রির বেশি হলে কৌণিক গতি সরল ছন্দিত থাকে না।" },
+        { q: "২৮. সার্বজনীন গ্যাস ধ্রুবক (R) এর মান কত?", options: ["8.314 J/mol.K", "0.0821 J/mol.K", "1.38 J/mol.K", "9.8 J/mol.K"], ans: 0, exp: "SI এককে R = 8.314 J mol^-1 K^-1।" },
+        { q: "২৯. স্থির চাপে গ্যাসের আয়তন কিসের সমানুপাতিক?", options: ["P", "T", "√T", "1/T"], ans: 1, exp: "চার্লসের সূত্র মতে V ∝ T (যখন P স্থির)।" },
+        { q: "৩০. বায়ুতে জলীয় বাষ্পের পরিমাণ বাড়লে চাপের কী হয়?", options: ["বাড়ে", "কমে", "একই থাকে", "শূন্য হয়"], ans: 1, exp: "জলীয় বাষ্প বায়ুর চেয়ে হালকা, তাই জলীয় বাষ্প বাড়লে বায়ুর চাপ কমে।" },
+        { q: "৩১. সরল ছন্দিত স্পন্দনের মোট শক্তি কিসের সমানুপাতিক?", options: ["বিস্তারের", "বিস্তারের বর্গের", "ভরের", "সময়ের"], ans: 1, exp: "E = 1/2 KA^2, অর্থাৎ E ∝ A^2।" },
+        { q: "৩২. দোলক ঘড়ি শীতে কেমন চলে?", options: ["ধীরে", "দ্রুত", "একই", "বন্ধ থাকে"], ans: 1, exp: "শীতে দৈর্ঘ্য (L) কমে, ফলে দোলনকাল কমে এবং ঘড়ি দ্রুত চলে।" },
+        { q: "৩৩. পৃথিবীর ব্যাসার্ধ বরাবর সুরঙ্গ করলে বস্তুর গতি কেমন হবে?", options: ["রৈখিক", "বৃত্তাকার", "সরল ছন্দিত", "পর্যায়বৃত্ত নয়"], ans: 2, exp: "পৃথিবীর সুড়ঙ্গে বস্তুর গতি সরল ছন্দিত স্পন্দন।" },
+        { q: "৩৪. গড় মুক্ত পথ (λ) ঘনত্বের কী?", options: ["সমানুপাতিক", "ব্যস্তানুপাতিক", "বর্গের সমানুপাতিক", "নির্ভর করে না"], ans: 1, exp: "ঘনত্ব বাড়লে সংঘর্ষ বেশি হয়, তাই গড় মুক্ত পথ কমে।" },
+        { q: "৩৫. গ্যাসের অণুর বেগ শূন্য হয় কোন তাপমাত্রায়?", options: ["0°C", "273°C", "-273.15°C", "100°C"], ans: 2, exp: "পরম শূন্য তাপমাত্রায় গ্যাসের আণবিক গতি থেমে যায়।" },
+        { q: "৩৬. সরণ বিস্তারের অর্ধেক হলে গতিশক্তি ও স্থিতিশক্তির অনুপাত কত?", options: ["3:1", "1:3", "1:1", "4:1"], ans: 0, exp: "x=A/2 হলে গতিশক্তি ও স্থিতিশক্তির অনুপাত ৩:১ হয়।" },
+        { q: "৩৭. সেকেন্ড দোলকের কম্পাঙ্ক কত?", options: ["0.5 Hz", "1 Hz", "2 Hz", "50 Hz"], ans: 0, exp: "f = 1/T = 1/2 = 0.5 Hz।" },
+        { q: "৩৮. পরম আর্দ্রতার একক কী?", options: ["kg/m^3", "kg/m^2", "Nm", "J"], ans: 0, exp: "একক আয়তনে জলীয় বাষ্পের ভর হলো পরম আর্দ্রতা।" },
+        { q: "৩৯. মেঘলা দিনে শিশির জমার সম্ভাবনা কেমন?", options: ["বেশি", "কম", "খুব বেশি", "একই"], ans: 1, exp: "মেঘলা দিনে পৃথিবী থেকে তাপ বিকিরণ হতে পারে না, তাই শিশির কম জমে।" },
+        { q: "৪০. অভিকর্ষজ ত্বরণ (g) মেরু অঞ্চলে কেমন?", options: ["সর্বনিম্ন", "সর্বোচ্চ", "শূন্য", "৯.৮"], ans: 1, exp: "মেরু অঞ্চলে পৃথিবীর ব্যাসার্ধ কম বলে g সবচেয়ে বেশি।" },
+        { q: "৪১. গ্যাসের অণুর ব্যাস বাড়লে গড় মুক্ত পথ কী হবে?", options: ["বাড়বে", "কমবে", "একই থাকবে", "দ্বিগুণ হবে"], ans: 1, exp: "অণুর আকার বাড়লে সংঘর্ষের সম্ভাবনা বাড়ে, তাই গড় মুক্ত পথ কমে।" },
+        { q: "৪২. ডাল্টনের আংশিক চাপ সূত্র কখন প্রযোজ্য নয়?", options: ["গ্যাস দুটি বিক্রিয়া করলে", "বিক্রিয়া না করলে", "আদর্শ গ্যাস হলে", "সব ক্ষেত্রে"], ans: 0, exp: "গ্যাসগুলো রাসায়নিকভাবে বিক্রিয়া করলে ডাল্টনের সূত্র খাটে না।" },
+        { q: "৪৩. প্রতি গ্রাম অণু গ্যাসের গতিশক্তি কত?", options: ["3/2 RT", "1/2 RT", "KT", "3/2 PV"], ans: 0, exp: "প্রতি গ্রাম অণুর জন্য গতিশক্তি ৩/২ RT।" },
+        { q: "৪৪. বায়ুমণ্ডলে জলীয় বাষ্প বেশি থাকলে বাষ্পায়ন কেমন হয়?", options: ["দ্রুত", "ধীরে", "বন্ধ", "অপরিবর্তিত"], ans: 1, exp: "বায়ু আর্দ্র থাকলে বাষ্পায়ন প্রক্রিয়া ধীর হয়ে যায়।" },
+        { q: "৪৫. শব্দের গতি কিসের উদাহরণ?", options: ["সরল ছন্দিত", "বৃত্তাকার", "রৈখিক", "জটিল"], ans: 0, exp: "শব্দ তরঙ্গের কণাগুলোর কম্পন সরল ছন্দিত স্পন্দন।" },
+        { q: "৪৬. সূর্যকে কেন্দ্র করে গ্রহের গতি কেমন?", options: ["সরল ছন্দিত", "পর্যায়বৃত্ত", "রৈখিক", "স্পন্দন"], ans: 1, exp: "এটি একটি পর্যায়বৃত্ত গতি কিন্তু স্পন্দন গতি নয়।" },
+        { q: "৪৭. অভিকর্ষজ ত্বরণ ও পর্যায়কালের লেখচিত্র কেমন?", options: ["সরলরেখা", "বক্ররেখা", "বৃত্ত", "অধিবৃত্ত"], ans: 1, exp: "T ∝ 1/√g হওয়ায় এটি একটি বক্ররেখা হয়।" },
+        { q: "৪৮. এসটিপি (STP) তে ১ মোল গ্যাসের আয়তন কত?", options: ["22.4 L", "24.4 L", "11.2 L", "10 L"], ans: 0, exp: "Standard Temperature and Pressure এ আয়তন ২২.৪ লিটার।" },
+        { q: "৪৯. স্প্রিং ধ্রুবকের মাত্রা কোনটি?", options: ["MT^-2", "MLT^-2", "ML^2T^-2", "MT^-1"], ans: 0, exp: "K = F/x = [MLT^-2] / [L] = [MT^-2]।" },
+        { q: "৫০. কণা সর্বোচ্চ বিস্তার থেকে যাত্রা শুরু করলে দশা কত?", options: ["0", "90°", "180°", "360°"], ans: 1, exp: "সর্বোচ্চ বিস্তার মানে ৯০ ডিগ্রি বা π/2 দশা।" },
+        { q: "৫১. অ্যাভোগাড্রো সংখ্যার মান কত?", options: ["6.023x10^23", "6.626x10^-34", "9.1x10^-31", "1.6x10^19"], ans: 0, exp: "প্রতি মোলে অণুর সংখ্যা হলো ৬.০২৩ x ১০^২৩।" },
+        { q: "৫২. গ্যাস সিলিন্ডার বিস্ফোরিত হলে কোন প্রক্রিয়া ঘটে?", options: ["সমোষ্ণ", "রুদ্ধতাপীয়", "সমচাপ", "সমআয়তন"], ans: 1, exp: "হঠাৎ ঘটে যাওয়া প্রক্রিয়াগুলো রুদ্ধতাপীয় (Adiabatic)।" },
+        { q: "৫৩. চাঁদে সেকেন্ড দোলকের পর্যায়কাল কত হবে?", options: ["2s", "4.9s", "1s", "0s"], ans: 1, exp: "চাঁদে g কম হওয়ায় পর্যায়কাল বেড়ে প্রায় ৪.৯ সেকেন্ড হয়।" },
+        { q: "৫৪. গ্যাসের চাপ কিসের ওপর নির্ভর করে না?", options: ["ঘনত্ব", "তাপমাত্রা", "অণুর সংখ্যা", "পাত্রের উপাদান"], ans: 3, exp: "পাত্র কী দিয়ে তৈরি তার ওপর গ্যাসের চাপ নির্ভর করে না।" },
+        { q: "৫৫. একটি দোলক ঘড়ি দিনে ৩০ সেকেন্ড হারায়, এর কারণ কী?", options: ["দৈর্ঘ্য বেড়েছে", "দৈর্ঘ্য কমেছে", "g বেড়েছে", "ঘড়িটি ঠিক আছে"], ans: 0, exp: "দৈর্ঘ্য বাড়লে দোলনকাল বাড়ে, ফলে ঘড়ি স্লো হয়ে সময় হারায়।" },
+        { q: "৫৬. আদর্শ গ্যাসের সিপি (Cp) ও সিভি (Cv) এর পার্থক্য কী?", options: ["R", "2R", "R/2", "0"], ans: 0, exp: "Cp - Cv = R (মেয়ারের সমীকরণ)।" },
+        { q: "৫৭. গ্যাসের গতিতত্ত্ব অনুযায়ী অণুর আয়তন পাত্রের তুলনায় কেমন?", options: ["সমান", "নগণ্য", "অর্ধেক", "বেশি"], ans: 1, exp: "আদর্শ গ্যাসের ক্ষেত্রে অণুর আয়তন নগণ্য ধরা হয়।" },
+        { q: "৫৮. রৈখিক কম্পাঙ্ক (f) ও কৌণিক কম্পাঙ্ক (ω) এর সম্পর্ক কী?", options: ["ω = 2πf", "f = 2πω", "ω = f/2π", "ω = f"], ans: 0, exp: "কৌণিক কম্পাঙ্ক হলো ২π ইনটু রৈখিক কম্পাঙ্ক।" },
+        { q: "৫৯. আপেক্ষিক আর্দ্রতা ১০০% হলে কী ঘটে?", options: ["বায়ু সম্পৃক্ত", "বৃষ্টি শুরু হবে", "জলীয় বাষ্প কম", "ক ও খ উভয়ই"], ans: 3, exp: "১০০% আর্দ্রতা মানে বায়ু সম্পৃক্ত এবং ঘনীভবন শুরু হতে পারে।" },
+        { q: "৬০. সরল ছন্দিত স্পন্দনে সরণ সর্বোচ্চ হলে ত্বরণ কেমন?", options: ["শূন্য", "সর্বোচ্চ", "মাঝারি", "অপরিবর্তিত"], ans: 1, exp: "a = -ω^2 x; তাই x সর্বোচ্চ হলে ত্বরণও সর্বোচ্চ হবে।" }
+    ];
+
+    const quizContent = document.getElementById('quiz-content');
+    questions.forEach((item, index) => {
+        let card = document.createElement('div');
+        card.className = 'question-card';
+        card.innerHTML = `
+            <h3>${item.q}</h3>
+            <ul class="options">
+                ${item.options.map((opt, i) => `
+                    <li><label><input type="radio" name="q${index}" value="${i}"> ${opt}</label></li>
+                `).join('')}
+            </ul>
+            <div class="explanation" id="exp${index}"><strong>ব্যাখ্যা:</strong> ${item.exp}</div>
+        `;
+        quizContent.appendChild(card);
+    });
+
+    let totalSeconds = 40 * 60;
+    const timerDisplay = document.getElementById('time');
+    let timerInterval = setInterval(() => {
+        let min = Math.floor(totalSeconds / 60);
+        let sec = totalSeconds % 60;
+        timerDisplay.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}`;
+        if (totalSeconds <= 0) { clearInterval(timerInterval); calculateResult(); }
+        totalSeconds--;
+    }, 1000);
+
+    function calculateResult() {
+        clearInterval(timerInterval);
+        let name = document.getElementById('studentName').value || "পরীক্ষার্থী";
+        let score = 0;
+        questions.forEach((item, index) => {
+            let selected = document.querySelector(`input[name="q${index}"]:checked`);
+            if (selected && parseInt(selected.value) === item.ans) score++;
+        });
+
+        const resBox = document.getElementById('result-box');
+        resBox.style.display = 'block';
+        resBox.className = score >= 45 ? 'success' : score >= 25 ? 'average' : 'fail';
+        resBox.innerHTML = `${name}, আপনি ৬০ এর মধ্যে ${score} পেয়েছেন।`;
+
+        document.querySelectorAll('.explanation').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('input').forEach(el => el.disabled = true);
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('timer-box').innerHTML = "পরীক্ষা শেষ";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+</script>
+</body>
+</html>
